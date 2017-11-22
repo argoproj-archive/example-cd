@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1
+kind: Workflow
+metadata:
+  generateName: sock-shop-workflow-
+spec:
+  entrypoint: sock-shop
+
+  templates:
+  - name: sock-shop
+    steps:
+    - - name: zipkin-ns-create
+        template: kubectl-ns-create
+        arguments:
+          parameters:
+          - name: ns-to-create
+            value: zipkin
+      - name: sock-shop-ns-create
+        template: kubectl-ns-create
+        arguments:
+          parameters:
+          - name: ns-to-create
+            value: sock-shop
+
+    - - name: zipkin-deploy
+        template: kubectl-create
+        arguments:
+          parameters:
+          - name: repo-manifest-dir
+            value: "example-cd/zipkin"
+
+    - - name: sockshop-db-deploy
+        template: kubectl-create
+        arguments: 
+          parameters:
+          - name: repo-manifest-dir
+            value: "example-cd/sock-shop-db"
+
+    - - name: sockshop-usvc-deploy
+        template: kubectl-create
+        arguments:
+          parameters:
+          - name: repo-manifest-dir
+            value: "example-cd/sock-shop-usvc"
+      - name: sock-shop-zipkin-usvc-deploy
+        template: kubectl-create
+        arguments:
+          parameters:
+          - name: repo-manifest-dir
+            value: "example-cd/sock-shop-zipkin-usvc"
+
+  - name: kubectl-ns-create
+    inputs:
+      parameters:
+      - name: ns-to-create
+    container:
+      image: docker.io/gaganapplatix/kubectl:1.8.3
+      command: ["/bin/sh", "-c"]
+      args: ["kubectl get namespace {{inputs.parameters.ns-to-create}}; RET=$?; if [ ${RET} -ne 0 ]; then kubectl create namespace {{inputs.parameters.ns-to-create}}; fi;"]
+      imagePullPolicy: Always
+        
+  - name: kubectl-create
+    inputs:
+      parameters:
+      - name: repo-manifest-dir
+      artifacts:
+      - name: git-artifact
+        path: /src
+        git:
+          repo: "https://github.com/argoproj/example-cd.git"
+          revision: "master"
+    container:
+      image: docker.io/gaganapplatix/kubectl:1.8.3
+      command: ["/bin/sh", "-c"]
+      args: ["kubectl create -f /src/{{inputs.parameters.repo-manifest-dir}}"]
+      imagePullPolicy: Always

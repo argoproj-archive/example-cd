@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1
+kind: Workflow
+metadata:
+  generateName: logging-workflow-
+spec:
+  entrypoint: sock-shop-logging
+
+  templates:
+  - name: sock-shop-logging
+    steps:
+    - - name: logging-deploy
+        template: kubectl-create
+        arguments:
+          parameters:
+          - name: repo-manifest-dir
+            value: "example-cd/logging"
+        
+  - name: kubectl-create
+    inputs:
+      parameters:
+      - name: repo-manifest-dir
+      artifacts:
+      - name: git-artifact
+        path: /src
+        git:
+          repo: "https://github.com/argoproj/example-cd.git"
+          revision: "master"
+    container:
+      image: docker.io/gaganapplatix/kubectl:1.8.3
+      command: ["/bin/sh", "-c"]
+      args: ["kubectl create -f /src/{{inputs.parameters.repo-manifest-dir}}"]
+      imagePullPolicy: Always
