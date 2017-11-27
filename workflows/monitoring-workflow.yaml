@@ -30,6 +30,10 @@ spec:
             value: grafana
           - name: service-namespace
             value: monitoring
+          - name: lb-check-timeout
+            value: 300
+          - name: lb-check-period
+            value: 5
 
     - - name: monitoring-cfg-deploy
         template: kubectl-create
@@ -72,5 +76,5 @@ spec:
     container:
       image: docker.io/gaganapplatix/kubectl:1.8.3
       command: ["/bin/bash", "-x", "-c"]
-      args: ["while true; do IP=$(kubectl get service {{inputs.parameters.service-name}} --namespace {{inputs.parameters.service-namespace}} -o json | jq '.status.loadBalancer.ingress[0].ip'); if [ \"${IP}\" != \"null\" ]; then echo \"{{inputs.parameters.service-name}} load balanced service came up on ip ${IP}\"; exit 0; fi; echo \"Waiting for grafana to come up\"; sleep 5; done"]
+      args: ["ITER=0; MAX_ITER=$(( {{inputs.parameters.lb-check-timeout}} / {{inputs.parameters.lb-check-period}} )); while [ ${ITER} -lt ${MAX_ITER} ]; do IP=$(kubectl get service {{inputs.parameters.service-name}} --namespace {{inputs.parameters.service-namespace}} -o json | jq '.status.loadBalancer.ingress[0].ip'); if [ \"${IP}\" != \"null\" ]; then echo \"{{inputs.parameters.service-name}} load balanced service came up on ip ${IP}\"; exit 0; fi; echo \"Waiting for service to come up\"; sleep 5; ITER=$((ITER+1)); done; echo \"ERROR: Timeout waiting for service to come up\"; exit 1"]
       imagePullPolicy: Always
