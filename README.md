@@ -13,7 +13,7 @@ kubectl create -f example-cd/monitoring-cr
 
 ### To run:
 
-cd workflows
+cd workflows  
 argo2 submit logging-workflow.yaml  
 argo2 submit sock-shop-workflow.yaml  
 argo2 submit monitoring-workflow.yaml  
