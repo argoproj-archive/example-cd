@@ -2,7 +2,7 @@
 
 WORKFLOWS=(logging-workflow.yaml sock-shop-workflow.yaml monitoring-workflow.yaml)
 
-ARGO2="/Users/gagan/Develop/Test/argo2/11_16_17/argo2"
+ARGO2="argo2"
 SUCCEEDED="Succeeded"
 FAILED="Failed"
 SUBMITTED="Pending"
