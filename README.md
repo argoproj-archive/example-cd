@@ -10,7 +10,7 @@ You have a kubectl installed and configured. You have argo2 installed and availa
 
 To be able to create cluster roles in kubernetes you need to run the following:
 
-kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=<user e-mail address>
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user="user login"  
 
 kubectl create -f example-cd/logging-cr  
 kubectl create -f example-cd/monitoring-cr  
