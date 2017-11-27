@@ -4,6 +4,11 @@ ASSUMPTIONS:
 
 You have a kubectl installed and configured. You have argo2 installed and available
 
+First time run the following:
+
+kubectl create -f example-cd/logging-cr
+kubectl create -f example-cd/monitoring-cr
+
 To run:
 
 cd workflows

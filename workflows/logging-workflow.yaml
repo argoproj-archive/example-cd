@@ -14,6 +14,15 @@ spec:
           parameters:
           - name: repo-manifest-dir
             value: "example-cd/logging"
+
+    - - name: kibana-up
+        template: check-lb-service-up
+        arguments:
+          parameters:
+          - name: service-name
+            value: kibana
+          - name: service-namespace
+            value: kube-system
         
   - name: kubectl-create
     inputs:
@@ -29,4 +38,15 @@ spec:
       image: docker.io/gaganapplatix/kubectl:1.8.3
       command: ["/bin/sh", "-c"]
       args: ["kubectl create -f /src/{{inputs.parameters.repo-manifest-dir}}"]
+      imagePullPolicy: Always
+
+  - name: check-lb-service-up
+    inputs:
+      parameters:
+      - name: service-name
+      - name: service-namespace
+    container:
+      image: docker.io/gaganapplatix/kubectl:1.8.3
+      command: ["/bin/bash", "-x", "-c"]
+      args: ["while true; do IP=$(kubectl get service {{inputs.parameters.service-name}} --namespace {{inputs.parameters.service-namespace}} -o json | jq '.status.loadBalancer.ingress[0].ip'); if [ \"${IP}\" != \"null\" ]; then echo \"{{inputs.parameters.service-name}} load balanced service came up on ip ${IP}\"; exit 0; fi; echo \"Waiting for grafana to come up\"; sleep 5; done"]
       imagePullPolicy: Always
