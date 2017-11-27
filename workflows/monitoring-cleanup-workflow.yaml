@@ -33,7 +33,7 @@ spec:
       parameters:
       - name: ns-to-delete
     container:
-      image: docker.io/gaganapplatix/kubectl:1.8.3
+      image: docker.io/argoproj/kubectl:sh-v1.8.3
       command: ["/bin/sh", "-c"]
       args: ["kubectl get namespace {{inputs.parameters.ns-to-delete}}; RET=$?; if [ ${RET} -eq 0 ]; then kubectl delete namespace {{inputs.parameters.ns-to-delete}}; fi;"]
       imagePullPolicy: Always
@@ -49,7 +49,7 @@ spec:
           repo: "https://github.com/argoproj/example-cd.git"
           revision: "master"
     container:
-      image: docker.io/gaganapplatix/kubectl:1.8.3
+      image: docker.io/argoproj/kubectl:sh-v1.8.3
       command: ["/bin/sh", "-c"]
       args: ["kubectl delete -f /src/{{inputs.parameters.repo-manifest-dir}};exit 0"]
       imagePullPolicy: Always

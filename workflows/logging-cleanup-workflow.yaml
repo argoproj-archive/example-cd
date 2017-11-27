@@ -26,7 +26,7 @@ spec:
           repo: "https://github.com/argoproj/example-cd.git"
           revision: "master"
     container:
-      image: docker.io/gaganapplatix/kubectl:1.8.3
+      image: docker.io/argoproj/kubectl:sh-v1.8.3
       command: ["/bin/sh", "-c"]
       args: ["kubectl delete -f /src/{{inputs.parameters.repo-manifest-dir}}; exit 0"]
       imagePullPolicy: Always
