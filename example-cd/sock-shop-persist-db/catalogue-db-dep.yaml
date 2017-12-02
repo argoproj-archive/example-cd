@@ -1,24 +1,18 @@
 ---
-apiVersion: apps/v1beta2
-kind: StatefulSet
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
   name: catalogue-db
   labels:
     name: catalogue-db
   namespace: sock-shop
 spec:
-  selector:
-    matchLabels:
-      app: catalogue-db
-  serviceName: catalogue-db
   replicas: 1
   template:
     metadata:
       labels:
         name: catalogue-db
-        app: catalogue-db
     spec:
-      terminationGracePeriodSeconds: 30
       containers:
       - name: catalogue-db
         image: weaveworksdemos/catalogue-db:0.3.0
@@ -27,19 +21,8 @@ spec:
             value: fake_password
           - name: MYSQL_DATABASE
             value: socksdb
-        volumeMounts:
-        - mountPath: /var/lib/mysql
-          name: catalogue-db-vol
         ports:
         - name: mysql
           containerPort: 3306
       nodeSelector:
         beta.kubernetes.io/os: linux
-  volumeClaimTemplates:
-  - metadata:
-      name: catalogue-db-vol
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 1Gi
