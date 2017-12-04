@@ -18,13 +18,13 @@ kubectl create -f example-cd/monitoring-cr
 ### To run:
 
 cd workflows  
-argo2 submit logging-workflow.yaml  
-argo2 submit sock-shop-workflow.yaml  
-argo2 submit monitoring-workflow.yaml  
+argo submit logging-workflow.yaml  
+argo submit sock-shop-workflow.yaml  
+argo submit monitoring-workflow.yaml  
 
 ### To cleanup:
 
-argo2 submit monitoring-cleanup-workflow.yaml  
-argo2 submit sock-shop-cleanup-workflow.yaml  
-argo2 submit logging-cleanup-workflow.yaml  
+argo submit monitoring-cleanup-workflow.yaml  
+argo submit sock-shop-cleanup-workflow.yaml  
+argo submit logging-cleanup-workflow.yaml  
 
